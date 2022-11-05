@@ -5,5 +5,5 @@ MDK-ARM/OpenBootloader.uvoptx
 MDK-ARM/startup_stm32g431xx.lst
 MDK-ARM/DebugConfig
 MDK-ARM/RTE
-MDK-ARM/STM32G474E-EVAL
+MDK-ARM/STM32G431
 STM32CubeIDE

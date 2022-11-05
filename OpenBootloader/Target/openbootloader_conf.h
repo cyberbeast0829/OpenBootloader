@@ -28,7 +28,7 @@
 
 /* -------------------------------- Device ID ------------------------------- */
 #define DEVICE_ID_MSB                     0x04              /* MSB byte of device ID */
-#define DEVICE_ID_LSB                     0x69              /* LSB byte of device ID */
+#define DEVICE_ID_LSB                     0x68              /* LSB byte of device ID */
 
 /* -------------------------- Definitions for Memories ---------------------- */
 #define FLASH_START_ADDRESS               FLASH_BASE
