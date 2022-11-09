@@ -158,12 +158,15 @@ void OPENBL_FDCAN_Configuration(void)
  */
 uint8_t OPENBL_FDCAN_ProtocolDetection(void)
 {
-  uint8_t detected;
+  uint8_t detected = 0;
 
   /* check if FIFO 0 receive at least one message */
   if (HAL_FDCAN_GetRxFifoFillLevel(&hfdcan, FDCAN_RX_FIFO0) > 0)
   {
-    detected = 1;
+    if (0x7F == OPENBL_FDCAN_ReadByte()) {
+      detected = 1;
+      OPENBL_FDCAN_SendByte(ACK_BYTE);
+    }
   }
   else
   {
@@ -209,7 +212,7 @@ uint8_t OPENBL_FDCAN_GetCommandOpcode(void)
   */
 uint8_t OPENBL_FDCAN_ReadByte(void)
 {
-  uint8_t byte = 0x0;
+  uint8_t buf[8];
 
   /* check if FIFO 0 receive at least one message */
   while (HAL_FDCAN_GetRxFifoFillLevel(&hfdcan, FDCAN_RX_FIFO0) < 1)
@@ -218,9 +221,9 @@ uint8_t OPENBL_FDCAN_ReadByte(void)
   }
 
   /* Retrieve Rx messages from RX FIFO0 */
-  HAL_FDCAN_GetRxMessage(&hfdcan, FDCAN_RX_FIFO0, &RxHeader, &byte);
+  HAL_FDCAN_GetRxMessage(&hfdcan, FDCAN_RX_FIFO0, &RxHeader, buf);
 
-  return byte;
+  return buf[0];
 }
 
 /**

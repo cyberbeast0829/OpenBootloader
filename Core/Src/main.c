@@ -27,6 +27,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+uint32_t appAddr = 0x8004000;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 
@@ -39,6 +40,7 @@ static void SystemClock_Config(void);
   */
 int main(void)
 {
+  uint32_t ticks = 0;
   /* STM32G4xx HAL library initialization:
        - Configure the Flash prefetch, Flash preread and Buffer caches
        - Systick timer is configured by default as source of time base, but user
@@ -56,9 +58,17 @@ int main(void)
   OpenBootloader_Init();
 
   /* Infinite loop */
+  ticks = HAL_GetTick();
   while (1)
   {
-    OpenBootloader_ProtocolDetection();
+    if (0 == OpenBootloader_ProtocolDetection()) {
+      if (HAL_GetTick() - ticks > 200) { // 如果没有任何接口被检测到，则跳转到APP
+        OPENBL_FLASH_JumpToAddress(appAddr);
+      }
+    }
+    else {
+      ticks = HAL_GetTick();
+    }
   }
 }
 

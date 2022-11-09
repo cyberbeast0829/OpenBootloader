@@ -27,7 +27,7 @@
 /* Exported functions ------------------------------------------------------- */
 void OpenBootloader_Init(void);
 void OpenBootloader_DeInit(void);
-void OpenBootloader_ProtocolDetection(void);
+uint32_t OpenBootloader_ProtocolDetection(void);
 
 #endif /* APP_OPENBOOTLOADER_H */
 

@@ -94,10 +94,10 @@ void OpenBootloader_Init(void)
   OPENBL_RegisterInterface(&USART_Handle);
 
   /* Register FDCAN interfaces */
-  FDCAN_Handle.p_Ops = &FDCAN_Ops;
-  FDCAN_Handle.p_Cmd = OPENBL_FDCAN_GetCommandsList();
+  //FDCAN_Handle.p_Ops = &FDCAN_Ops;
+  //FDCAN_Handle.p_Cmd = OPENBL_FDCAN_GetCommandsList();
 
-  OPENBL_RegisterInterface(&FDCAN_Handle);
+  //OPENBL_RegisterInterface(&FDCAN_Handle);
 
   /* Register IWDG interfaces */
   IWDG_Handle.p_Ops = &IWDG_Ops;
@@ -133,7 +133,7 @@ void OpenBootloader_DeInit(void)
   * @param  None.
   * @retval None.
   */
-void OpenBootloader_ProtocolDetection(void)
+uint32_t OpenBootloader_ProtocolDetection(void)
 {
   static uint32_t interface_detected = 0;
 
@@ -146,6 +146,7 @@ void OpenBootloader_ProtocolDetection(void)
   {
     OPENBL_CommandProcess();
   }
+  return interface_detected;
 }
 
 
