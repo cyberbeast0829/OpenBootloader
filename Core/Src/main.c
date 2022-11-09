@@ -109,6 +109,7 @@ static void SystemClock_Config(void)
 void System_DeInit(void)
 {
   HAL_RCC_DeInit();
+  HAL_DeInit();
 }
 
 /**
