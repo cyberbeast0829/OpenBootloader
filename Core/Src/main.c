@@ -22,6 +22,8 @@
 
 #include "main.h"
 #include "app_openbootloader.h"
+#include "common_interface.h"
+#include "flash_interface.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -56,6 +58,8 @@ int main(void)
   SystemClock_Config();
 
   OpenBootloader_Init();
+	
+	Common_EnableIrq();
 
   /* Infinite loop */
   ticks = HAL_GetTick();

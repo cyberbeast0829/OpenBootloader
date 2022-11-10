@@ -41,7 +41,7 @@ static void OPENBL_USART_Init(void)
   LL_USART_InitTypeDef USART_InitStruct;
 
   USART_InitStruct.PrescalerValue      = LL_USART_PRESCALER_DIV1;
-  USART_InitStruct.BaudRate            = 115200U;
+  USART_InitStruct.BaudRate            = 921600U;
   USART_InitStruct.DataWidth           = LL_USART_DATAWIDTH_8B;
   USART_InitStruct.StopBits            = LL_USART_STOPBITS_1;
   USART_InitStruct.Parity              = LL_USART_PARITY_NONE;
@@ -49,6 +49,7 @@ static void OPENBL_USART_Init(void)
   USART_InitStruct.TransferDirection   = LL_USART_DIRECTION_TX_RX;
   USART_InitStruct.OverSampling        = LL_USART_OVERSAMPLING_16;
 
+  /*
   if (IS_USART_AUTOBAUDRATE_DETECTION_INSTANCE(USARTx))
   {
     LL_USART_EnableAutoBaudRate(USARTx);
@@ -57,8 +58,9 @@ static void OPENBL_USART_Init(void)
   else
   {
     LL_USART_DisableAutoBaudRate(USARTx);
-    USART_InitStruct.BaudRate = 115200;
+    USART_InitStruct.BaudRate = 921600U;
   }
+  */
 
   LL_USART_Init(USARTx, &USART_InitStruct);
   LL_USART_Enable(USARTx);
@@ -112,16 +114,23 @@ uint8_t OPENBL_USART_ProtocolDetection(void)
 {
   uint8_t detected;
 
-  /* Check if the USART1 is addressed */
-  if (((USART1->ISR & LL_USART_ISR_ABRF) != 0) && ((USART1->ISR & LL_USART_ISR_ABRE) == 0))
+  if (LL_USART_IsActiveFlag_ORE(USARTx))
   {
-    /* Read byte in order to flush the 0x7F syncronization byte */
-    OPENBL_USART_ReadByte();
+    LL_USART_ClearFlag_ORE(USARTx);
+  }
 
-    /* Aknowledge the host */
-    OPENBL_USART_SendByte(ACK_BYTE);
-
-    detected = 1;
+  /* Check if the USART1 is addressed */
+  if (LL_USART_IsActiveFlag_RXNE_RXFNE(USARTx))
+  {
+    if (SYNC_BYTE == LL_USART_ReceiveData8(USARTx))
+    {
+      OPENBL_USART_SendByte(ACK_BYTE);
+      detected = 1;
+    }
+    else
+    {
+      detected = 0;
+    }
   }
   else
   {
@@ -142,6 +151,10 @@ uint8_t OPENBL_USART_GetCommandOpcode(void)
   /* Get the command opcode */
   command_opc = OPENBL_USART_ReadByte();
 
+  if (command_opc == SYNC_BYTE) {
+    return command_opc;
+  }
+
   /* Check the data integrity */
   if ((command_opc ^ OPENBL_USART_ReadByte()) != 0xFF)
   {
@@ -161,6 +174,11 @@ uint8_t OPENBL_USART_GetCommandOpcode(void)
   */
 uint8_t OPENBL_USART_ReadByte(void)
 {
+  if (LL_USART_IsActiveFlag_ORE(USARTx))
+  {
+    LL_USART_ClearFlag_ORE(USARTx);
+  }
+  
   while (!LL_USART_IsActiveFlag_RXNE_RXFNE(USARTx))
   {
     OPENBL_IWDG_Refresh();

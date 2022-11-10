@@ -163,7 +163,7 @@ uint8_t OPENBL_FDCAN_ProtocolDetection(void)
   /* check if FIFO 0 receive at least one message */
   if (HAL_FDCAN_GetRxFifoFillLevel(&hfdcan, FDCAN_RX_FIFO0) > 0)
   {
-    if (0x7F == OPENBL_FDCAN_ReadByte()) {
+    if (SYNC_BYTE == OPENBL_FDCAN_ReadByte()) {
       detected = 1;
       OPENBL_FDCAN_SendByte(ACK_BYTE);
     }

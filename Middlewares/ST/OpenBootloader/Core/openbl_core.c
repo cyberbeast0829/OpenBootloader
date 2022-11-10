@@ -250,6 +250,12 @@ void OPENBL_CommandProcess(void)
           p_Interface->p_Cmd->NsReadoutUnprotect();
         }
         break;
+      case SYNC_BYTE:
+        p_Interface->p_Ops->SendByte(ACK_BYTE);
+        break;
+      case CMD_SOFT_RESET:
+        HAL_NVIC_SystemReset();
+        break;
 
       /* Unknown command opcode */
       default:

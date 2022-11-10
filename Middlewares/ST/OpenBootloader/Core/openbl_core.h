@@ -68,7 +68,8 @@ typedef struct
 #define ACK_BYTE                          0x79U             /* Acknowledge Byte ID */
 #define NACK_BYTE                         0x1FU             /* No Acknowledge Byte ID */
 #define BUSY_BYTE                         0x76U             /* Busy Byte */
-#define SYNC_BYTE                         0xA5U             /* synchronization byte */
+//#define SYNC_BYTE                         0xA5U             /* synchronization byte */
+#define SYNC_BYTE                         0x7FU             /* synchronization byte */
 
 /* ---------------------- Open Bootloader Commands ---------------------------*/
 #define CMD_GET_COMMAND                   0x00U             /* Get commands command */
@@ -89,6 +90,7 @@ typedef struct
 #define CMD_NS_READ_PROTECT               0x83U             /* No Stretch Read Protect command */
 #define CMD_NS_READ_UNPROTECT             0x93U             /* No Stretch Read Unprotect command */
 #define CMD_CHECKSUM                      0xA1U
+#define CMD_SOFT_RESET                    0xB1U             /* Reset the target MCU and restart */
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
