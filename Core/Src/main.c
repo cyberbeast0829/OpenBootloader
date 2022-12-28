@@ -124,6 +124,7 @@ void System_DeInit(void)
 {
   HAL_RCC_DeInit();
   HAL_DeInit();
+  SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk; // 关掉SysTick
 }
 
 /**
