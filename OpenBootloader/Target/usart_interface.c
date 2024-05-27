@@ -41,7 +41,7 @@ static void OPENBL_USART_Init(void)
   LL_USART_InitTypeDef USART_InitStruct;
 
   USART_InitStruct.PrescalerValue      = LL_USART_PRESCALER_DIV1;
-  USART_InitStruct.BaudRate            = 921600U;
+  USART_InitStruct.BaudRate            = 115200U;
   USART_InitStruct.DataWidth           = LL_USART_DATAWIDTH_8B;
   USART_InitStruct.StopBits            = LL_USART_STOPBITS_1;
   USART_InitStruct.Parity              = LL_USART_PARITY_NONE;
@@ -78,7 +78,7 @@ void OPENBL_USART_Configuration(void)
 
   /* Enable all resources clocks --------------------------------------------*/
   /* Enable used GPIOx clocks */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /* Enable USART clock */
   __HAL_RCC_USART1_CLK_ENABLE();
@@ -88,14 +88,14 @@ void OPENBL_USART_Configuration(void)
            +-------------+
            |   USART1    |
      +-----+-------------+
-     | TX  |     PA9     |
+     | TX  |     PB6     |
      +-----+-------------+
-     | RX  |     PA10    |
+     | RX  |     PB7    |
      +-----+-------------+ */
 
   GPIO_InitStruct.Pin       = USARTx_TX_PIN;
   GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull      = GPIO_PULLUP;
+  GPIO_InitStruct.Pull      = GPIO_NOPULL;
   GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.Alternate = USARTx_ALTERNATE;
   HAL_GPIO_Init(USARTx_TX_GPIO_PORT, &GPIO_InitStruct);

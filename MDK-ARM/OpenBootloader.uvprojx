@@ -7,23 +7,23 @@
 
   <Targets>
     <Target>
-      <TargetName>STM32G431</TargetName>
+      <TargetName>STM32G473</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARM_Compiler_5.06u6</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32G431VBTx</Device>
+          <Device>STM32G473RETx</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32G4xx_DFP.1.5.0</PackID>
           <PackURL>https://www.keil.com/pack/</PackURL>
-          <Cpu>IRAM(0x20000000,0x00008000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x00020000) IROM(0x08000000,0x00080000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32G43x-4x_128 -FS08000000 -FL020000 -FP0($$Device:STM32G431VBTx$CMSIS\Flash\STM32G43x-4x_128.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC8000 -FN1 -FF0STM32G47x-8x_512 -FS08000000 -FL080000 -FP0($$Device:STM32G473RETx$CMSIS\Flash\STM32G47x-8x_512.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32G431VBTx$Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g4xx.h</RegisterFile>
+          <RegisterFile>$$Device:STM32G473RETx$Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32G431VBTx$CMSIS\SVD\STM32G431xx.svd</SFDFile>
+          <SFDFile>$$Device:STM32G473RETx$CMSIS\SVD\STM32G473xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -247,12 +247,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x8000</Size>
+                <Size>0x20000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x80000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -277,7 +277,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x4000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -302,7 +302,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x8000</Size>
+                <Size>0x20000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,STM32G431xx</Define>
+              <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,STM32G473xx</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;../OpenBootloader/App;../OpenBootloader/Target;../Middlewares/ST/OpenBootloader/Modules/USART;../Middlewares/ST/OpenBootloader/Modules/FDCAN;../Middlewares/ST/OpenBootloader/Modules/Mem;../Middlewares/ST/OpenBootloader/Core;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/STM32G4xx_HAL_Driver/Inc</IncludePath>
             </VariousControls>
@@ -405,9 +405,9 @@
           <GroupName>Application/MDK-ARM</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32g431xx.s</FileName>
+              <FileName>startup_stm32g473xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\startup_stm32g431xx.s</FilePath>
+              <FilePath>.\startup_stm32g473xx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -629,7 +629,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.6.0" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
         <targetInfos>
-          <targetInfo name="STM32G431"/>
+          <targetInfo name="STM32G473"/>
         </targetInfos>
       </component>
     </components>
