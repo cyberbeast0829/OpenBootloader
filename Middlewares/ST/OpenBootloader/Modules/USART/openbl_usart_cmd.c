@@ -53,7 +53,7 @@ static void OPENBL_USART_WriteUnprotect(void);
 
 static uint8_t OPENBL_USART_GetAddress(uint32_t *Address);
 
-
+int32_t totalWriteBytes = 0;
 /* Exported variables --------------------------------------------------------*/
 OPENBL_CommandsTypeDef OPENBL_USART_Commands =
 {
@@ -292,6 +292,8 @@ static void OPENBL_USART_WriteMemory(void)
         /* Send last Acknowledge synchronization byte */
         OPENBL_USART_SendByte(ACK_BYTE);
 
+        totalWriteBytes += codesize;
+
         /* Check if the received address is an option byte address */
         mem_area = OPENBL_MEM_GetAddressArea(address);
 
@@ -508,7 +510,7 @@ static void OPENBL_USART_EraseMemory(void)
       else
       {
         error_value = OPENBL_MEM_Erase(FLASH_START_ADDRESS, (uint8_t *) USART_RAM_Buf, USART_RAM_BUFFER_SIZE);
-
+        totalWriteBytes = 0;
         /* Errors from memory erase are not managed, always return ACK */
         if (error_value == SUCCESS)
         {
