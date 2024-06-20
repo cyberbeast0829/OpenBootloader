@@ -239,11 +239,11 @@ static void OPENBL_USART_WriteMemory(void)
   uint8_t data;
 
   /* Check memory protection then send adequate response */
-  if (OPENBL_MEM_GetReadOutProtectionStatus() != RESET)
-  {
-    OPENBL_USART_SendByte(NACK_BYTE);
-  }
-  else
+  //if (OPENBL_MEM_GetReadOutProtectionStatus() != RESET)
+  //{
+    //OPENBL_USART_SendByte(NACK_BYTE);
+  //}
+  //else
   {
     OPENBL_USART_SendByte(ACK_BYTE);
 
@@ -412,11 +412,11 @@ static void OPENBL_USART_EraseMemory(void)
   ramaddress = (uint8_t *) USART_RAM_Buf;
 
   /* Check if the memory is not protected */
-  if (OPENBL_MEM_GetReadOutProtectionStatus() != RESET)
-  {
-    OPENBL_USART_SendByte(NACK_BYTE);
-  }
-  else
+  //if (OPENBL_MEM_GetReadOutProtectionStatus() != RESET)
+  //{
+    //OPENBL_USART_SendByte(NACK_BYTE);
+  //}
+  //else
   {
     OPENBL_USART_SendByte(ACK_BYTE);
 
