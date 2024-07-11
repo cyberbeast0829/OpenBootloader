@@ -7,23 +7,23 @@
 
   <Targets>
     <Target>
-      <TargetName>STM32G473</TargetName>
+      <TargetName>N32H473</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARM_Compiler_5.06u6</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32G473RETx</Device>
-          <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32G4xx_DFP.1.5.0</PackID>
-          <PackURL>https://www.keil.com/pack/</PackURL>
-          <Cpu>IRAM(0x20000000,0x00020000) IROM(0x08000000,0x00080000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Device>N32H473RE</Device>
+          <Vendor>Nationstech</Vendor>
+          <PackID>Nationstech.N32H47x_DFP.0.8.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
+          <Cpu>IRAM(0x20000000,0x30000) IROM(0x08000000,0x80000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC8000 -FN1 -FF0STM32G47x-8x_512 -FS08000000 -FL080000 -FP0($$Device:STM32G473RETx$CMSIS\Flash\STM32G47x-8x_512.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0N32H47x_512 -FS08000000 -FL080000 -FP0($$Device:N32H473RE$Flash\N32H47x_512.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32G473RETx$Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g4xx.h</RegisterFile>
+          <RegisterFile>$$Device:N32H473RE$firmware\CMSIS\device\n32h47x.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32G473RETx$CMSIS\SVD\STM32G473xx.svd</SFDFile>
+          <SFDFile>$$Device:N32H473RE$svd\N32H473.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -110,11 +110,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments> -REMAP -MPU</SimDllArguments>
+          <SimDllArguments> -REMAP</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -247,7 +247,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x30000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -277,7 +277,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x8000</Size>
+                <Size>0x80000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -302,7 +302,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x30000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,STM32G473xx</Define>
+              <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,N32H473</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../OpenBootloader/App;../OpenBootloader/Target;../Middlewares/ST/OpenBootloader/Modules/USART;../Middlewares/ST/OpenBootloader/Modules/FDCAN;../Middlewares/ST/OpenBootloader/Modules/Mem;../Middlewares/ST/OpenBootloader/Core;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/STM32G4xx_HAL_Driver/Inc</IncludePath>
+              <IncludePath>../Core/Inc;../OpenBootloader/App;../OpenBootloader/Target;..\Middlewares\N32\OpenBootloader\Modules\USART;..\Middlewares\N32\OpenBootloader\Modules\FDCAN;..\Middlewares\N32\OpenBootloader\Modules\Mem;..\Middlewares\N32\OpenBootloader\Core;..\Drivers\n32h47x_48x_std_periph_driver\Inc;..\Drivers\CMSIS\core;..\Drivers\CMSIS\device</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,14 +390,9 @@
               <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_msp.c</FileName>
+              <FileName>n32h47x_48x_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32g4xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g4xx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32g4xx_it.c</FilePath>
+              <FilePath>..\Core\Src\n32h47x_48x_it.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -405,9 +400,9 @@
           <GroupName>Application/MDK-ARM</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32g473xx.s</FileName>
+              <FileName>startup_n32h473.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\startup_stm32g473xx.s</FilePath>
+              <FilePath>..\Drivers\CMSIS\device\startup\startup_n32h473.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -430,11 +425,6 @@
               <FilePath>../OpenBootloader/Target/common_interface.c</FilePath>
             </File>
             <File>
-              <FileName>fdcan_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../OpenBootloader/Target/fdcan_interface.c</FilePath>
-            </File>
-            <File>
               <FileName>flash_interface.c</FileName>
               <FileType>1</FileType>
               <FilePath>../OpenBootloader/Target/flash_interface.c</FilePath>
@@ -443,16 +433,6 @@
               <FileName>iwdg_interface.c</FileName>
               <FileType>1</FileType>
               <FilePath>../OpenBootloader/Target/iwdg_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>optionbytes_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../OpenBootloader/Target/optionbytes_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>otp_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../OpenBootloader/Target/otp_interface.c</FilePath>
             </File>
             <File>
               <FileName>ram_interface.c</FileName>
@@ -485,94 +465,169 @@
           <GroupName>Drivers/CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32g4xx.c</FileName>
+              <FileName>system_n32h47x_48x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/system_stm32g4xx.c</FilePath>
+              <FilePath>..\Drivers\CMSIS\device\system_n32h47x_48x.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/STM32G4xx_HAL_Driver</GroupName>
+          <GroupName>Drivers/n32h47x_48x_std_periph_driver</GroupName>
           <Files>
             <File>
-              <FileName>stm32g4xx_hal.c</FileName>
+              <FileName>misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\misc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_cortex.c</FileName>
+              <FileName>n32h47x_48x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_adc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_fdcan.c</FileName>
+              <FileName>n32h47x_48x_comp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_fdcan.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_comp.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_flash.c</FileName>
+              <FileName>n32h47x_48x_cordic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_cordic.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_flash_ex.c</FileName>
+              <FileName>n32h47x_48x_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ex.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_crc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_flash_ramfunc.c</FileName>
+              <FileName>n32h47x_48x_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ramfunc.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_dac.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_gpio.c</FileName>
+              <FileName>n32h47x_48x_dbg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_dbg.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_iwdg.c</FileName>
+              <FileName>n32h47x_48x_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_iwdg.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_dma.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_pwr.c</FileName>
+              <FileName>n32h47x_48x_dvp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_dvp.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_pwr_ex.c</FileName>
+              <FileName>n32h47x_48x_eth.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr_ex.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_eth.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_rcc.c</FileName>
+              <FileName>n32h47x_48x_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_exti.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_rcc_ex.c</FileName>
+              <FileName>n32h47x_48x_fdcan.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc_ex.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_fdcan.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_usart_ex.c</FileName>
+              <FileName>n32h47x_48x_femc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart_ex.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_femc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_ll_gpio.c</FileName>
+              <FileName>n32h47x_48x_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_gpio.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_flash.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_ll_rcc.c</FileName>
+              <FileName>n32h47x_48x_fmac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_rcc.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_fmac.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g4xx_ll_usart.c</FileName>
+              <FileName>n32h47x_48x_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_usart.c</FilePath>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_lptim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_lptim.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_pga.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_pga.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_sdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_shrtim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_shrtim.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_vrefbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_vrefbuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_wwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>n32h47x_48x_xspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\n32h47x_48x_std_periph_driver\Src\n32h47x_48x_xspi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -582,19 +637,12 @@
             <File>
               <FileName>openbl_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/OpenBootloader/Core/openbl_core.c</FilePath>
+              <FilePath>..\Middlewares\N32\OpenBootloader\Core\openbl_core.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Middlewares/OpenBootloader/Modules/FDCAN</GroupName>
-          <Files>
-            <File>
-              <FileName>openbl_fdcan_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/OpenBootloader/Modules/FDCAN/openbl_fdcan_cmd.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Middlewares/OpenBootloader/Modules/MEM</GroupName>
@@ -602,7 +650,7 @@
             <File>
               <FileName>openbl_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/OpenBootloader/Modules/Mem/openbl_mem.c</FilePath>
+              <FilePath>..\Middlewares\N32\OpenBootloader\Modules\Mem\openbl_mem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -612,7 +660,7 @@
             <File>
               <FileName>openbl_usart_cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/OpenBootloader/Modules/USART/openbl_usart_cmd.c</FilePath>
+              <FilePath>..\Middlewares\N32\OpenBootloader\Modules\USART\openbl_usart_cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -629,7 +677,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.6.0" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
         <targetInfos>
-          <targetInfo name="STM32G473"/>
+          <targetInfo name="N32H473"/>
         </targetInfos>
       </component>
     </components>

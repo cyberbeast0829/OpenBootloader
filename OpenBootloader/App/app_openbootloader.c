@@ -38,7 +38,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static OPENBL_HandleTypeDef USART_Handle;
-static OPENBL_HandleTypeDef FDCAN_Handle;
+//static OPENBL_HandleTypeDef FDCAN_Handle;
 static OPENBL_HandleTypeDef IWDG_Handle;
 
 static OPENBL_OpsTypeDef USART_Ops =
@@ -49,7 +49,7 @@ static OPENBL_OpsTypeDef USART_Ops =
   OPENBL_USART_GetCommandOpcode,
   OPENBL_USART_SendByte
 };
-
+/*
 static OPENBL_OpsTypeDef FDCAN_Ops =
 {
   OPENBL_FDCAN_Configuration,
@@ -58,7 +58,7 @@ static OPENBL_OpsTypeDef FDCAN_Ops =
   OPENBL_FDCAN_GetCommandOpcode,
   OPENBL_FDCAN_SendByte
 };
-
+*/
 static OPENBL_OpsTypeDef IWDG_Ops =
 {
   OPENBL_IWDG_Configuration,
@@ -111,11 +111,11 @@ void OpenBootloader_Init(void)
   /* Initialise memories */
   OPENBL_MEM_RegisterMemory(&FLASH_Descriptor);
   OPENBL_MEM_RegisterMemory(&RAM_Descriptor);
-  OPENBL_MEM_RegisterMemory(&OB1_Descriptor);
-  OPENBL_MEM_RegisterMemory(&OB2_Descriptor);
-  OPENBL_MEM_RegisterMemory(&OTP_Descriptor);
-  OPENBL_MEM_RegisterMemory(&ICP1_Descriptor);
-  OPENBL_MEM_RegisterMemory(&ICP2_Descriptor);
+  //OPENBL_MEM_RegisterMemory(&OB1_Descriptor);
+  //OPENBL_MEM_RegisterMemory(&OB2_Descriptor);
+  //OPENBL_MEM_RegisterMemory(&OTP_Descriptor);
+  //OPENBL_MEM_RegisterMemory(&ICP1_Descriptor);
+  //OPENBL_MEM_RegisterMemory(&ICP2_Descriptor);
 }
 
 /**

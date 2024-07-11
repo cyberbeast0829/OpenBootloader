@@ -21,8 +21,8 @@
 #define PLATFORM_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32g4xx_hal.h"
-#include "stm32g4xx_ll_usart.h"
+#include "n32h47x_48x_conf.h"
+#include "n32h47x_48x_usart.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

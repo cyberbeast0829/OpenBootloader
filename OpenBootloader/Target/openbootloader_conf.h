@@ -54,9 +54,9 @@
 
 #define OPENBL_RAM_SIZE                   0x00003000U               /* RAM used by the Open Bootloader */
 
-#define RDP_LEVEL_0                       OB_RDP_LEVEL_0
-#define RDP_LEVEL_1                       OB_RDP_LEVEL_1
-#define RDP_LEVEL_2                       OB_RDP_LEVEL_2
+#define RDP_LEVEL_0                       0
+#define RDP_LEVEL_1                       1
+#define RDP_LEVEL_2                       2
 
 #define AREA_ERROR                        0x0U              /* Error Address Area */
 #define FLASH_AREA                        0x1U              /* Flash Address Area */

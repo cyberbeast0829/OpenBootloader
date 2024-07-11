@@ -38,16 +38,15 @@ static void OPENBL_USART_Init(void);
 
 static void OPENBL_USART_Init(void)
 {
-  LL_USART_InitTypeDef USART_InitStruct;
+  USART_InitType USART_InitStructure;
 
-  USART_InitStruct.PrescalerValue      = LL_USART_PRESCALER_DIV1;
-  USART_InitStruct.BaudRate            = 115200U;
-  USART_InitStruct.DataWidth           = LL_USART_DATAWIDTH_8B;
-  USART_InitStruct.StopBits            = LL_USART_STOPBITS_1;
-  USART_InitStruct.Parity              = LL_USART_PARITY_NONE;
-  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
-  USART_InitStruct.TransferDirection   = LL_USART_DIRECTION_TX_RX;
-  USART_InitStruct.OverSampling        = LL_USART_OVERSAMPLING_16;
+  USART_InitStructure.BaudRate            = 115200U;
+  USART_InitStructure.WordLength          = USART_WL_8B;
+  USART_InitStructure.StopBits            = USART_STPB_1;
+  USART_InitStructure.Parity              = USART_PE_NO;
+  USART_InitStructure.HardwareFlowControl = USART_HFCTRL_NONE;
+  USART_InitStructure.OverSampling        = USART_16OVER;
+  USART_InitStructure.Mode                = USART_MODE_RX | USART_MODE_TX;
 
   /*
   if (IS_USART_AUTOBAUDRATE_DETECTION_INSTANCE(USARTx))
@@ -58,12 +57,12 @@ static void OPENBL_USART_Init(void)
   else
   {
     LL_USART_DisableAutoBaudRate(USARTx);
-    USART_InitStruct.BaudRate = 921600U;
+    USART_InitStructure.BaudRate = 921600U;
   }
   */
 
-  LL_USART_Init(USARTx, &USART_InitStruct);
-  LL_USART_Enable(USARTx);
+  USART_Init(USARTx, &USART_InitStructure);
+  USART_Enable(USARTx, ENABLE);
 }
 
 /* Exported functions --------------------------------------------------------*/
@@ -74,14 +73,15 @@ static void OPENBL_USART_Init(void)
  */
 void OPENBL_USART_Configuration(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct;
+  GPIO_InitType GPIO_InitStructure;
 
   /* Enable all resources clocks --------------------------------------------*/
   /* Enable used GPIOx clocks */
-  __HAL_RCC_GPIOB_CLK_ENABLE();
+  RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOB, ENABLE);
+  RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 
   /* Enable USART clock */
-  __HAL_RCC_USART1_CLK_ENABLE();
+  RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_USART1, ENABLE);
 
   /* USART1 pins configuration -----------------------------------------------*/
   /*
@@ -93,15 +93,15 @@ void OPENBL_USART_Configuration(void)
      | RX  |     PB7    |
      +-----+-------------+ */
 
-  GPIO_InitStruct.Pin       = USARTx_TX_PIN;
-  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull      = GPIO_NOPULL;
-  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
-  GPIO_InitStruct.Alternate = USARTx_ALTERNATE;
-  HAL_GPIO_Init(USARTx_TX_GPIO_PORT, &GPIO_InitStruct);
+  GPIO_InitStructure.Pin       = USARTx_TX_PIN;
+  GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
+  GPIO_InitStructure.GPIO_Slew_Rate     = GPIO_SLEW_RATE_FAST;
+  GPIO_InitStructure.GPIO_Alternate = USARTx_ALTERNATE;
+  GPIO_InitPeripheral(USARTx_TX_GPIO_PORT, &GPIO_InitStructure);
 
-  GPIO_InitStruct.Pin = USARTx_RX_PIN;
-  HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
+  GPIO_InitStructure.Pin = USARTx_RX_PIN;
+  GPIO_InitPeripheral(USARTx_RX_GPIO_PORT, &GPIO_InitStructure);
 
   OPENBL_USART_Init();
 }
@@ -114,15 +114,18 @@ uint8_t OPENBL_USART_ProtocolDetection(void)
 {
   uint8_t detected;
 
-  if (LL_USART_IsActiveFlag_ORE(USARTx))
+  if (USART_GetFlagStatus(USARTx, USART_FLAG_OREF) == SET)
   {
-    LL_USART_ClearFlag_ORE(USARTx);
+    if (USART_GetFlagStatus(USARTx, USART_FLAG_RXDNE) == RESET)
+    {
+      USART_ReceiveData(USARTx); // 读DAT寄存器会清除OREF标志
+    }
   }
 
   /* Check if the USART1 is addressed */
-  if (LL_USART_IsActiveFlag_RXNE_RXFNE(USARTx))
+  if (USART_GetFlagStatus(USARTx, USART_FLAG_RXDNE) == SET)
   {
-    if (SYNC_BYTE == LL_USART_ReceiveData8(USARTx))
+    if (SYNC_BYTE == USART_ReceiveData(USARTx))
     {
       OPENBL_USART_SendByte(ACK_BYTE);
       detected = 1;
@@ -174,17 +177,20 @@ uint8_t OPENBL_USART_GetCommandOpcode(void)
   */
 uint8_t OPENBL_USART_ReadByte(void)
 {
-  if (LL_USART_IsActiveFlag_ORE(USARTx))
+  if (USART_GetFlagStatus(USARTx, USART_FLAG_OREF) == SET)
   {
-    LL_USART_ClearFlag_ORE(USARTx);
+    if (USART_GetFlagStatus(USARTx, USART_FLAG_RXDNE) == RESET)
+    {
+      USART_ReceiveData(USARTx); // 读DAT寄存器会清除OREF标志
+    }
   }
   
-  while (!LL_USART_IsActiveFlag_RXNE_RXFNE(USARTx))
+  while (USART_GetFlagStatus(USARTx, USART_FLAG_RXDNE) == RESET)
   {
     OPENBL_IWDG_Refresh();
   }
 
-  return LL_USART_ReceiveData8(USARTx);
+  return (uint8_t)USART_ReceiveData(USARTx);
 }
 
 /**
@@ -194,9 +200,9 @@ uint8_t OPENBL_USART_ReadByte(void)
   */
 void OPENBL_USART_SendByte(uint8_t Byte)
 {
-  LL_USART_TransmitData8(USARTx, (Byte & 0xFF));
+  USART_SendData(USARTx, (Byte & 0xFF));
 
-  while (!LL_USART_IsActiveFlag_TC(USARTx))
+  while (USART_GetFlagStatus(USARTx, USART_FLAG_TXDE) == RESET)
   {
   }
 }

@@ -26,33 +26,24 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static IWDG_HandleTypeDef IWDGHandle;
-
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 
 void OPENBL_IWDG_Configuration(void)
 {
-  IWDGHandle.Instance       = IWDG;
-  IWDGHandle.Init.Prescaler = IWDG_PRESCALER_256;
-  IWDGHandle.Init.Window    = IWDG_WINDOW_DISABLE;
-  IWDGHandle.Init.Reload    = IWDG_KEY_RELOAD;
+  IWDG_WriteConfig(IWDG_WRITE_ENABLE);
+	IWDG_SetPrescalerDiv(IWDG_PRESCALER_DIV256);
+	IWDG_CntReload(25); // 32K LSI时钟，分步256是125Hz，则25/125 = 0.2S
 
-  /* In case the user has enabled the IWDG through HW before entering the Open Bootloader */
-  IWDG->KR = IWDG_KEY_WRITE_ACCESS_ENABLE;
-  IWDG->PR = IWDG_PRESCALER_256;
-  IWDG->KR = IWDG_KEY_RELOAD;
+	IWDG_ReloadKey();
+  IWDG_Enable();
 }
 
 void OPENBL_IWDG_Refresh(void)
 {
   /* Refresh IWDG: reload counter */
-  if (HAL_IWDG_Refresh(&IWDGHandle) != HAL_OK)
-  {
-    /* Refresh Error */
-    Error_Handler();
-  }
+  IWDG_ReloadKey();
 }
 
 

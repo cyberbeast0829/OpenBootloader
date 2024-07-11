@@ -29,7 +29,7 @@
 #define USARTx_TX_GPIO_PORT               GPIOB
 #define USARTx_RX_PIN                     GPIO_PIN_7
 #define USARTx_RX_GPIO_PORT               GPIOB
-#define USARTx_ALTERNATE                  GPIO_AF7_USART1
+#define USARTx_ALTERNATE                  GPIO_AF1
 
 /* ------------------------- Definitions for FDCAN -------------------------- */
 #define FDCANx                            FDCAN1
