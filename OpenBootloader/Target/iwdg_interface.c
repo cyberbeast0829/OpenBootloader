@@ -32,18 +32,18 @@
 
 void OPENBL_IWDG_Configuration(void)
 {
-  IWDG_WriteConfig(IWDG_WRITE_ENABLE);
-	IWDG_SetPrescalerDiv(IWDG_PRESCALER_DIV256);
-	IWDG_CntReload(25); // 32K LSI时钟，分步256是125Hz，则25/125 = 0.2S
+  // IWDG_WriteConfig(IWDG_WRITE_ENABLE);
+	// IWDG_SetPrescalerDiv(IWDG_PRESCALER_DIV256);
+	// IWDG_CntReload(100); // 32K LSI时钟，分频256是125Hz，则100/125 = 0.8S
 
-	IWDG_ReloadKey();
-  IWDG_Enable();
+	// IWDG_ReloadKey();
+  // IWDG_Enable();
 }
 
 void OPENBL_IWDG_Refresh(void)
 {
   /* Refresh IWDG: reload counter */
-  IWDG_ReloadKey();
+  //IWDG_ReloadKey();
 }
 
 
