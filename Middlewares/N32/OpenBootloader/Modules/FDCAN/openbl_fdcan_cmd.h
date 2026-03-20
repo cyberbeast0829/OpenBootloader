@@ -27,6 +27,10 @@
 #define OPENBL_FDCAN_VERSION             0x10U                /* Open Bootloader FDCAN protocol V1.0 */
 #define FDCAN_RAM_BUFFER_SIZE             1156                /* Size of FDCAN buffer used to store received data from the host */
 
+/* FDCAN frame data size: 8 for classic CAN, 64 for CAN FD */
+#define FDCAN_FRAME_DATA_SIZE             8U
+#define FDCAN_FRAME_DLC                   FDCAN_DLC_BYTES_8
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 extern uint8_t TxData[FDCAN_RAM_BUFFER_SIZE];

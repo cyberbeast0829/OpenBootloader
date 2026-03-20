@@ -196,8 +196,8 @@ static void OPENBL_FDCAN_ReadMemory(void)
       /* Get the number of bytes to be read from memory (Max: data + 1 = 256) */
       number_of_bytes = (uint32_t)RxData[4] + 1U;
 
-      count  = number_of_bytes / 64U;
-      single = (uint32_t)(number_of_bytes % 64U);
+      count  = number_of_bytes / FDCAN_FRAME_DATA_SIZE;
+      single = (uint32_t)(number_of_bytes % FDCAN_FRAME_DATA_SIZE);
 
       /* Get the memory index to know from which memory we will read */
       memory_index = OPENBL_MEM_GetMemoryIndex(address);
@@ -206,7 +206,7 @@ static void OPENBL_FDCAN_ReadMemory(void)
       {
         data_length = 0;
 
-        for (counter = 64U ; counter > 0U; counter--)
+        for (counter = FDCAN_FRAME_DATA_SIZE ; counter > 0U; counter--)
         {
           TxData[data_length] = OPENBL_MEM_Read(address, memory_index);
 
@@ -214,7 +214,7 @@ static void OPENBL_FDCAN_ReadMemory(void)
           address++;
         }
 
-        OPENBL_FDCAN_SendBytes(TxData, FDCAN_DLC_BYTES_64);
+        OPENBL_FDCAN_SendBytes(TxData, FDCAN_FRAME_DLC);
 
         count--;
       }
@@ -232,14 +232,14 @@ static void OPENBL_FDCAN_ReadMemory(void)
         }
 
         /* Fill the rest of the buffer with 0xFF */
-        for (counter = (64U - single) ; counter > 0U; counter--)
+        for (counter = (FDCAN_FRAME_DATA_SIZE - single) ; counter > 0U; counter--)
         {
           TxData[data_length] = 0xFF;
 
           data_length++;
         }
 
-        OPENBL_FDCAN_SendBytes(TxData, FDCAN_DLC_BYTES_64);
+        OPENBL_FDCAN_SendBytes(TxData, FDCAN_FRAME_DLC);
       }
 
       OPENBL_FDCAN_SendByte(ACK_BYTE);
@@ -278,8 +278,8 @@ static void OPENBL_FDCAN_WriteMemory(void)
       /* Get the number of bytes to be written to memory (Max: data + 1 = 256) */
       CodeSize = (uint32_t)RxData[4] + 1U;
 
-      count = CodeSize / 64U;
-      single = (uint32_t)(CodeSize % 64U);
+      count = CodeSize / FDCAN_FRAME_DATA_SIZE;
+      single = (uint32_t)(CodeSize % FDCAN_FRAME_DATA_SIZE);
 
       data_length = 0;
 
@@ -287,7 +287,7 @@ static void OPENBL_FDCAN_WriteMemory(void)
       {
         while (data_length != count)
         {
-          OPENBL_FDCAN_ReadBytes(&RxData[data_length * 64U], 64U);
+          OPENBL_FDCAN_ReadBytes(&RxData[data_length * FDCAN_FRAME_DATA_SIZE], FDCAN_FRAME_DATA_SIZE);
 
           data_length++;
         }
@@ -295,7 +295,7 @@ static void OPENBL_FDCAN_WriteMemory(void)
 
       if (single != 0U)
       {
-        OPENBL_FDCAN_ReadBytes(&RxData[(CodeSize - single)], 64U);
+        OPENBL_FDCAN_ReadBytes(&RxData[(CodeSize - single)], FDCAN_FRAME_DATA_SIZE);
       }
 
       /* Write data to memory */
@@ -468,7 +468,7 @@ static void OPENBL_FDCAN_EraseMemory(void)
       /* Receive the list of pages to be erased (each page num is on two bytes)
        * The order of data received is LSB first
        */
-      OPENBL_FDCAN_ReadBytes(&RxData[2], 64U);
+      OPENBL_FDCAN_ReadBytes(&RxData[2], FDCAN_FRAME_DATA_SIZE);
 
       i = 2;
 
