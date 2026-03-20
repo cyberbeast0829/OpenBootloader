@@ -38,7 +38,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static OPENBL_HandleTypeDef USART_Handle;
-//static OPENBL_HandleTypeDef FDCAN_Handle;
+static OPENBL_HandleTypeDef FDCAN_Handle;
 static OPENBL_HandleTypeDef IWDG_Handle;
 
 static OPENBL_OpsTypeDef USART_Ops =
@@ -49,7 +49,6 @@ static OPENBL_OpsTypeDef USART_Ops =
   OPENBL_USART_GetCommandOpcode,
   OPENBL_USART_SendByte
 };
-/*
 static OPENBL_OpsTypeDef FDCAN_Ops =
 {
   OPENBL_FDCAN_Configuration,
@@ -58,7 +57,6 @@ static OPENBL_OpsTypeDef FDCAN_Ops =
   OPENBL_FDCAN_GetCommandOpcode,
   OPENBL_FDCAN_SendByte
 };
-*/
 static OPENBL_OpsTypeDef IWDG_Ops =
 {
   OPENBL_IWDG_Configuration,
@@ -94,10 +92,10 @@ void OpenBootloader_Init(void)
   OPENBL_RegisterInterface(&USART_Handle);
 
   /* Register FDCAN interfaces */
-  //FDCAN_Handle.p_Ops = &FDCAN_Ops;
-  //FDCAN_Handle.p_Cmd = OPENBL_FDCAN_GetCommandsList();
+  FDCAN_Handle.p_Ops = &FDCAN_Ops;
+  FDCAN_Handle.p_Cmd = OPENBL_FDCAN_GetCommandsList();
 
-  //OPENBL_RegisterInterface(&FDCAN_Handle);
+  OPENBL_RegisterInterface(&FDCAN_Handle);
 
   /* Register IWDG interfaces */
   IWDG_Handle.p_Ops = &IWDG_Ops;

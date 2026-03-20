@@ -30,14 +30,16 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-FDCAN_HandleTypeDef hfdcan;
-FDCAN_FilterTypeDef sFilterConfig;
-FDCAN_TxHeaderTypeDef TxHeader;
-FDCAN_RxHeaderTypeDef RxHeader;
+static FDCAN_InitType       fdcanInitStruct;
+static FDCAN_FilterType     sFilterConfig;
+static FDCAN_TxHeaderType   TxHeader;
+static FDCAN_RxHeaderType   RxHeader;
+static FDCAN_MsgRamType     fdcanMsgRamInfo;
 
 /* Exported variables --------------------------------------------------------*/
 uint8_t TxData[FDCAN_RAM_BUFFER_SIZE];
 uint8_t RxData[FDCAN_RAM_BUFFER_SIZE];
+uint32_t FDCAN_ram[512]; // 用于消息缓冲的RAM，总共512 words
 
 /* Private function prototypes -----------------------------------------------*/
 static void OPENBL_FDCAN_Init(void);
@@ -46,77 +48,61 @@ static void OPENBL_FDCAN_Init(void);
 
 static void OPENBL_FDCAN_Init(void)
 {
-  // 根据设置的波特率，计算TS1, TS2（SyncJumpWidth=1）
-  int br2prescaler[10] = {16, 8, 8, 4, 4, 4, 4, 4, 4, 4};
-  int br2ts1[10] = {89, 89, 59, 89, 71, 59, 51, 44, 39, 36};
-  int br2ts2[10] = {16, 16, 11, 16, 13, 11, 9, 8, 7, 6};
-  int baudrate = 5;
-  if (baudrate > 10) {
-    baudrate = 10;
-  }
-  else if (baudrate < 1) {
-    baudrate = 1;
-  }
+  // 固定升级波特率为500Kbps，波特率预分频器和时间段配置如下
+  // prescaler = 2;
+  // sync_jump = 2;
+  // time_seg1 = 34;
+  // time_seg2 = 5;
+  // data_prescaler = 2;
+  // data_sync_jump = 2;
+  // data_time_seg1 = 34;
+  // data_time_seg2 = 5;
+  FDCAN_DeInit(FDCANx);
 
-  hfdcan.Instance = FDCANx;
-  hfdcan.Init.ClockDivider = FDCAN_CLOCK_DIV1;
-  hfdcan.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
-  hfdcan.Init.Mode = FDCAN_MODE_NORMAL;
-  hfdcan.Init.AutoRetransmission = DISABLE;
-  hfdcan.Init.TransmitPause = DISABLE;
-  hfdcan.Init.ProtocolException = DISABLE;
-  hfdcan.Init.NominalPrescaler = br2prescaler[baudrate-1];
-  hfdcan.Init.NominalSyncJumpWidth = 1;
-  hfdcan.Init.NominalTimeSeg1 = br2ts1[baudrate-1];
-  hfdcan.Init.NominalTimeSeg2 = br2ts2[baudrate-1];
-  hfdcan.Init.DataPrescaler = 1;
-  hfdcan.Init.DataSyncJumpWidth = 1;
-  hfdcan.Init.DataTimeSeg1 = 12;
-  hfdcan.Init.DataTimeSeg2 = 2;
-  hfdcan.Init.StdFiltersNbr = 1;
-  hfdcan.Init.ExtFiltersNbr = 0;
-  hfdcan.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
-  if (HAL_FDCAN_Init(&hfdcan) != HAL_OK)
+  /* FDCAN Init */
+  fdcanInitStruct.FrameFormat        = FDCAN_FRAME_CLASSIC;
+  fdcanInitStruct.Mode               = FDCAN_MODE_NORMAL;
+  fdcanInitStruct.AutoRetransmission = DISABLE;
+  fdcanInitStruct.TransmitPause      = DISABLE;
+  fdcanInitStruct.ProtocolException  = DISABLE;
+  fdcanInitStruct.Prescaler          = 2;
+  fdcanInitStruct.SyncJumpWidth      = 2;
+  fdcanInitStruct.TimeSeg1           = 34;
+  fdcanInitStruct.TimeSeg2           = 5;
+  fdcanInitStruct.DataPrescaler      = 2;
+  fdcanInitStruct.DataSyncJumpWidth  = 2;
+  fdcanInitStruct.DataTimeSeg1       = 34;
+  fdcanInitStruct.DataTimeSeg2       = 5;
+
+  /* Message RAM configuration */
+  fdcanInitStruct.MsgRamStrAddr      = (uint32_t)FDCAN_ram;  // 使用FDCAN_ram作为消息RAM
+  fdcanInitStruct.MsgRamOffset       = 0;
+  fdcanInitStruct.StdFilterSize      = 4;
+  fdcanInitStruct.ExtFilterSize      = 4;
+  fdcanInitStruct.RxFifo0Size        = 8;
+  fdcanInitStruct.RxFifo1Size        = 0;
+  fdcanInitStruct.RxBufferSize       = 0;
+  fdcanInitStruct.TxEventSize        = 0;
+  fdcanInitStruct.TxBufferSize       = 0;
+  fdcanInitStruct.RxFifo0DataSize    = FDCAN_DATA_BYTES_8;
+  fdcanInitStruct.RxFifo1DataSize    = FDCAN_DATA_BYTES_8;
+  fdcanInitStruct.RxBufferDataSize   = FDCAN_DATA_BYTES_8;
+  fdcanInitStruct.TxBufferDataSize   = FDCAN_DATA_BYTES_8;
+  fdcanInitStruct.TxFifoQueueMode    = FDCAN_TX_FIFO_MODE;
+  fdcanInitStruct.TxFifoQueueSize    = 8;
+  fdcanInitStruct.pMsgInfo           = &fdcanMsgRamInfo;
+
+  if (FDCAN_Init(FDCANx, &fdcanInitStruct) != SUCCESS)
   {
     while (1);
   }
-  /*                Bit time configuration:
-    Bit time parameter         | Nominal      |  Data
-    ---------------------------|--------------|----------------
-    fdcan_ker_ck               | 20 MHz       | 20 MHz
-    Time_quantum (tq)          | 50 ns        | 50 ns
-    Synchronization_segment    | 1 tq         | 1 tq
-    Propagation_segment        | 23 tq        | 1 tq
-    Phase_segment_1            | 8 tq         | 4 tq
-    Phase_segment_2            | 8 tq         | 4 tq
-    Synchronization_Jump_width | 8 tq         | 4 tq
-    Bit_length                 | 40 tq = 2 us | 10 tq = 0.5 us
-    Bit_rate                   | 0.5 MBit/s   | 2 MBit/s
-  */
-  /*
-  hfdcan.Instance                  = FDCANx;
-  hfdcan.Init.FrameFormat          = FDCAN_FRAME_FD_BRS;
-  hfdcan.Init.Mode                 = FDCAN_MODE_NORMAL;
-  hfdcan.Init.AutoRetransmission   = ENABLE;
-  hfdcan.Init.TransmitPause        = DISABLE;
-  hfdcan.Init.ProtocolException    = ENABLE;
-  hfdcan.Init.NominalPrescaler     = 0x1;
-  hfdcan.Init.NominalSyncJumpWidth = 0x10;
-  hfdcan.Init.NominalTimeSeg1      = 0x3F;
-  hfdcan.Init.NominalTimeSeg2      = 0x10;
-  hfdcan.Init.DataPrescaler        = 0x1;
-  hfdcan.Init.DataSyncJumpWidth    = 0x4;
-  hfdcan.Init.DataTimeSeg1         = 0xF;
-  hfdcan.Init.DataTimeSeg2         = 0x4;
-  hfdcan.Init.StdFiltersNbr        = 1;
-  hfdcan.Init.ExtFiltersNbr        = 0;
-  hfdcan.Init.TxFifoQueueMode      = FDCAN_TX_FIFO_OPERATION;
 
-  if (HAL_FDCAN_Init(&hfdcan) != HAL_OK)
-  {
-    while (1);
-  }
-  */
+  FDCAN_ConfigTSPrescaler(FDCANx, FDCAN_TIMESTAMP_PRESC_16);
+  FDCAN_Config_TS(FDCANx, FDCAN_TIMESTAMP_DISABLE);
+
+  FDCAN_ConfigTxDelayCompensation(FDCANx, fdcanInitStruct.DataTimeSeg1, fdcanInitStruct.DataTimeSeg1);
+  FDCAN_EnableTxDelayCompensation(FDCANx);
+
   /* Configure Rx filter */
   sFilterConfig.IdType       = FDCAN_STANDARD_ID;
   sFilterConfig.FilterIndex  = 0;
@@ -124,21 +110,21 @@ static void OPENBL_FDCAN_Init(void)
   sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
   sFilterConfig.FilterID1    = 0x128;
   sFilterConfig.FilterID2    = 0x128; // bootloader时ID默认为0x128
-  HAL_FDCAN_ConfigFilter(&hfdcan, &sFilterConfig);
+  FDCAN_ConfigFilter(FDCANx, &sFilterConfig);
 
   /* Prepare Tx Header */
-  TxHeader.Identifier          = 0; // 上位机ID默认为0
-  TxHeader.IdType              = FDCAN_STANDARD_ID;
-  TxHeader.TxFrameType         = FDCAN_DATA_FRAME;
-  TxHeader.DataLength          = FDCAN_DLC_BYTES_8;
-  TxHeader.ErrorStateIndicator = FDCAN_ESI_PASSIVE;
-  TxHeader.BitRateSwitch       = FDCAN_BRS_OFF;
-  TxHeader.FDFormat            = FDCAN_CLASSIC_CAN;
-  TxHeader.TxEventFifoControl  = FDCAN_NO_TX_EVENTS;
-  TxHeader.MessageMarker       = 0;
+  TxHeader.ID            = 0; // 上位机ID默认为0
+  TxHeader.IdType        = FDCAN_STANDARD_ID;
+  TxHeader.TxFrameType   = FDCAN_DATA_FRAME;
+  TxHeader.DataLength    = FDCAN_DLC_BYTES_8;
+  TxHeader.ErrorState    = FDCAN_ESI_PASSIVE;
+  TxHeader.BitRateSwitch = FDCAN_BRS_OFF;
+  TxHeader.FDFormat      = FDCAN_CLASSIC_CAN;
+  TxHeader.TxEventFifo   = FDCAN_NO_TX_EVENTS;
+  TxHeader.MsgMarker     = 0;
 
   /* Start the FDCAN module */
-  HAL_FDCAN_Start(&hfdcan);
+  FDCAN_Start(FDCANx);
 }
 
 /* Exported functions --------------------------------------------------------*/
@@ -149,6 +135,41 @@ static void OPENBL_FDCAN_Init(void)
  */
 void OPENBL_FDCAN_Configuration(void)
 {
+  GPIO_InitType GPIO_InitStructure;
+
+  RCC_ConfigFDCANPllClk(RCC_FDCAN_PLLSRC_DIV6); // 6分频，240M / 6 = 40M
+  RCC_ConfigFDCANClksrc(RCC_FDCAN_CLKSRC_PLL); // 使用PLL作为FDCAN时钟源
+
+  /* Enable all resources clocks */
+  RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOB, ENABLE);
+  RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+
+  /* Enable FDCAN1 clock */
+  RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_FDCAN1, ENABLE);
+  RCC_EnableAPB1PeriphReset(RCC_APB1_PERIPH_FDCAN1);
+
+  /* FDCAN1 pins configuration
+           +-------------+
+           |   FDCAN1    |
+     +-----+-------------+
+     | TX  |     PB9     |
+     +-----+-------------+
+     | RX  |     PB8     |
+     +-----+-------------+ */
+
+  GPIO_InitStructure.Pin            = FDCANx_TX_PIN;
+  GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
+  GPIO_InitStructure.GPIO_Current   = GPIO_DC_12mA;
+  GPIO_InitStructure.GPIO_Slew_Rate = GPIO_SLEW_RATE_FAST;
+  GPIO_InitStructure.GPIO_Alternate = FDCANx_TX_AF;
+  GPIO_InitPeripheral(FDCANx_TX_GPIO_PORT, &GPIO_InitStructure);
+
+  GPIO_InitStructure.Pin            = FDCANx_RX_PIN;
+  GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_INPUT;
+  GPIO_InitStructure.GPIO_Alternate = FDCANx_RX_AF;
+  GPIO_InitPeripheral(FDCANx_RX_GPIO_PORT, &GPIO_InitStructure);
+
   OPENBL_FDCAN_Init();
 }
 
@@ -161,7 +182,7 @@ uint8_t OPENBL_FDCAN_ProtocolDetection(void)
   uint8_t detected = 0;
 
   /* check if FIFO 0 receive at least one message */
-  if (HAL_FDCAN_GetRxFifoFillLevel(&hfdcan, FDCAN_RX_FIFO0) > 0)
+  if (FDCAN_GetRxFifoFillLevel(FDCANx, FDCAN_RX_FIFO0) > 0)
   {
     if (SYNC_BYTE == OPENBL_FDCAN_ReadByte()) {
       detected = 1;
@@ -183,24 +204,24 @@ uint8_t OPENBL_FDCAN_ProtocolDetection(void)
 uint8_t OPENBL_FDCAN_GetCommandOpcode(void)
 {
   uint8_t command_opc      = 0x0;
-  HAL_StatusTypeDef status = HAL_OK;
+  ErrorStatus status       = SUCCESS;
 
   /* check if FIFO 0 receive at least one message */
-  while (HAL_FDCAN_GetRxFifoFillLevel(&hfdcan, FDCAN_RX_FIFO0) < 1)
+  while (FDCAN_GetRxFifoFillLevel(FDCANx, FDCAN_RX_FIFO0) < 1)
   {}
 
   /* Retrieve Rx messages from RX FIFO0 */
-  status = HAL_FDCAN_GetRxMessage(&hfdcan, FDCAN_RX_FIFO0, &RxHeader, RxData);
+  status = FDCAN_GetRxMsg(FDCANx, FDCAN_RX_FIFO0, &RxHeader, RxData);
 
   /* Check for errors */
-  if (status == HAL_ERROR)
+  if (status == ERROR)
   {
     command_opc = ERROR_COMMAND;
   }
   else
   {
-    command_opc         = RxHeader.Identifier;
-    TxHeader.Identifier = RxHeader.Identifier;
+    command_opc  = RxHeader.ID;
+    TxHeader.ID  = RxHeader.ID;
   }
 
   return command_opc;
@@ -215,13 +236,13 @@ uint8_t OPENBL_FDCAN_ReadByte(void)
   uint8_t buf[8];
 
   /* check if FIFO 0 receive at least one message */
-  while (HAL_FDCAN_GetRxFifoFillLevel(&hfdcan, FDCAN_RX_FIFO0) < 1)
+  while (FDCAN_GetRxFifoFillLevel(FDCANx, FDCAN_RX_FIFO0) < 1)
   {
     OPENBL_IWDG_Refresh();
   }
 
   /* Retrieve Rx messages from RX FIFO0 */
-  HAL_FDCAN_GetRxMessage(&hfdcan, FDCAN_RX_FIFO0, &RxHeader, buf);
+  FDCAN_GetRxMsg(FDCANx, FDCAN_RX_FIFO0, &RxHeader, buf);
 
   return buf[0];
 }
@@ -233,13 +254,13 @@ uint8_t OPENBL_FDCAN_ReadByte(void)
 void OPENBL_FDCAN_ReadBytes(uint8_t *Buffer, uint32_t BufferSize)
 {
   /* check if FIFO 0 receive at least one message */
-  while (HAL_FDCAN_GetRxFifoFillLevel(&hfdcan, FDCAN_RX_FIFO0) < 1)
+  while (FDCAN_GetRxFifoFillLevel(FDCANx, FDCAN_RX_FIFO0) < 1)
   {
     OPENBL_IWDG_Refresh();
   }
 
   /* Retrieve Rx messages from RX FIFO0 */
-  HAL_FDCAN_GetRxMessage(&hfdcan, FDCAN_RX_FIFO0, &RxHeader, Buffer);
+  FDCAN_GetRxMsg(FDCANx, FDCAN_RX_FIFO0, &RxHeader, Buffer);
 }
 
 /**
@@ -251,17 +272,17 @@ void OPENBL_FDCAN_SendByte(uint8_t Byte)
 {
   TxHeader.DataLength = FDCAN_DLC_BYTES_1;
 
-  while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan) == 0)
+  while (FDCAN_GetTxFifoFreeLevel(FDCANx) == 0)
   {}
 
-  HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan, &TxHeader, &Byte);
+  FDCAN_AddMsgToTxFifoQ(FDCANx, &TxHeader, &Byte);
 
-  /* Wait that the data is completely sent (sent FIFO empty) */
-  while (((&hfdcan)->Instance->IR & FDCAN_IR_TFE) != FDCAN_IR_TFE)
+  /* Wait that the data is completely sent (Tx FIFO empty) */
+  while ((FDCANx->IR & FDCAN_IR_TFE) != FDCAN_IR_TFE)
   {}
 
   /* Clear the complete flag */
-  (&hfdcan)->Instance->IR &= FDCAN_IR_TFE;
+  FDCANx->IR = FDCAN_IR_TFE;
 }
 
 /**
@@ -274,17 +295,15 @@ void OPENBL_FDCAN_SendBytes(uint8_t *Buffer, uint32_t BufferSize)
 {
   TxHeader.DataLength = BufferSize;
 
-  while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan) == 0)
+  while (FDCAN_GetTxFifoFreeLevel(FDCANx) == 0)
   {}
 
-  HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan, &TxHeader, Buffer);
+  FDCAN_AddMsgToTxFifoQ(FDCANx, &TxHeader, Buffer);
 
-  /* Wait that the data is completely sent (sent FIFO empty) */
-  while (((&hfdcan)->Instance->IR & FDCAN_IR_TFE) != FDCAN_IR_TFE)
+  /* Wait that the data is completely sent (Tx FIFO empty) */
+  while ((FDCANx->IR & FDCAN_IR_TFE) != FDCAN_IR_TFE)
   {}
 
   /* Clear the complete flag */
-  (&hfdcan)->Instance->IR &= FDCAN_IR_TFE;
+  FDCANx->IR = FDCAN_IR_TFE;
 }
-
-

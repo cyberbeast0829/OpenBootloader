@@ -53,7 +53,7 @@ int main(void)
   while (1)
   {
     if (0 == OpenBootloader_ProtocolDetection()) {
-      if (ticks - last_ticks > 200) { // 如果没有任何接口被检测到，则跳转到APP
+      if (ticks - last_ticks > 500) { // 如果没有任何接口被检测到，则跳转到APP
         OPENBL_FLASH_JumpToAddress(appAddr);
       }
     }

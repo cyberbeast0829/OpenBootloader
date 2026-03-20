@@ -261,11 +261,11 @@ static void OPENBL_FDCAN_WriteMemory(void)
   uint8_t data_length;
 
   /* Check memory protection then send adequate response */
-  if (OPENBL_MEM_GetReadOutProtectionStatus() != RESET)
-  {
-    OPENBL_FDCAN_SendByte(NACK_BYTE);
-  }
-  else
+  // if (OPENBL_MEM_GetReadOutProtectionStatus() != RESET)
+  // {
+  //   OPENBL_FDCAN_SendByte(NACK_BYTE);
+  // }
+  // else
   {
     if (OPENBL_FDCAN_GetAddress(&address) == NACK_BYTE)
     {
