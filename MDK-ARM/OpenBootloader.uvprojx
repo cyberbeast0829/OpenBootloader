@@ -14,16 +14,16 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>N32H473RE</Device>
+          <Device>N32H473CE</Device>
           <Vendor>Nationstech</Vendor>
           <PackID>Nationstech.N32H47x_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x30000) IROM(0x08000000,0x80000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0N32H47x_512 -FS08000000 -FL080000 -FP0($$Device:N32H473RE$Flash\N32H47x_512.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0N32H47x_512 -FS08000000 -FL080000 -FP0($$Device:N32H473CE$Flash\N32H47x_512.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:N32H473RE$firmware\CMSIS\device\n32h47x.h</RegisterFile>
+          <RegisterFile>$$Device:N32H473CE$firmware\CMSIS\device\n32h47x.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:N32H473RE$svd\N32H473.svd</SFDFile>
+          <SFDFile>$$Device:N32H473CE$svd\N32H473.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,N32H473</Define>
+              <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,N32H473,HSE_VALUE=24000000</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;../OpenBootloader/App;../OpenBootloader/Target;..\Middlewares\N32\OpenBootloader\Modules\USART;..\Middlewares\N32\OpenBootloader\Modules\FDCAN;..\Middlewares\N32\OpenBootloader\Modules\Mem;..\Middlewares\N32\OpenBootloader\Core;..\Drivers\n32h47x_48x_std_periph_driver\Inc;..\Drivers\CMSIS\core;..\Drivers\CMSIS\device</IncludePath>
             </VariousControls>
@@ -686,8 +686,8 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.6.0" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="6.1.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.7.36" url="https://www.keil.com/pack/" vendor="ARM" version="6.1.0"/>
         <targetInfos>
           <targetInfo name="N32H473"/>
         </targetInfos>

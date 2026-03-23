@@ -48,15 +48,17 @@ static void OPENBL_FDCAN_Init(void);
 
 static void OPENBL_FDCAN_Init(void)
 {
-  // 固定升级波特率为500Kbps，波特率预分频器和时间段配置如下
-  // prescaler = 2;
+  // 确定波特率设置，baudrate=FDCAN Clock/((1+BS1+BS2)*Prescaler)
+  // APB1Clock = PCLK1 = 40M
+  // 固定升级波特率为500Kbps，波特率预分频器和时间段配置如下（采样点为80%）：
+  // prescaler = 4;
   // sync_jump = 2;
-  // time_seg1 = 34;
-  // time_seg2 = 5;
-  // data_prescaler = 2;
+  // time_seg1 = 15;
+  // time_seg2 = 4;
+  // data_prescaler = 4;
   // data_sync_jump = 2;
-  // data_time_seg1 = 34;
-  // data_time_seg2 = 5;
+  // data_time_seg1 = 15;
+  // data_time_seg2 = 4;
   FDCAN_DeInit(FDCANx);
 
   /* FDCAN Init */
@@ -65,14 +67,14 @@ static void OPENBL_FDCAN_Init(void)
   fdcanInitStruct.AutoRetransmission = DISABLE;
   fdcanInitStruct.TransmitPause      = DISABLE;
   fdcanInitStruct.ProtocolException  = DISABLE;
-  fdcanInitStruct.Prescaler          = 2;
+  fdcanInitStruct.Prescaler          = 4;
   fdcanInitStruct.SyncJumpWidth      = 2;
-  fdcanInitStruct.TimeSeg1           = 34;
-  fdcanInitStruct.TimeSeg2           = 5;
-  fdcanInitStruct.DataPrescaler      = 2;
+  fdcanInitStruct.TimeSeg1           = 15;
+  fdcanInitStruct.TimeSeg2           = 4;
+  fdcanInitStruct.DataPrescaler      = 4;
   fdcanInitStruct.DataSyncJumpWidth  = 2;
-  fdcanInitStruct.DataTimeSeg1       = 34;
-  fdcanInitStruct.DataTimeSeg2       = 5;
+  fdcanInitStruct.DataTimeSeg1       = 15;
+  fdcanInitStruct.DataTimeSeg2       = 4;
 
   /* Message RAM configuration */
   fdcanInitStruct.MsgRamStrAddr      = (uint32_t)FDCAN_ram;  // 使用FDCAN_ram作为消息RAM
@@ -100,8 +102,8 @@ static void OPENBL_FDCAN_Init(void)
   FDCAN_ConfigTSPrescaler(FDCANx, FDCAN_TIMESTAMP_PRESC_16);
   FDCAN_Config_TS(FDCANx, FDCAN_TIMESTAMP_DISABLE);
 
-  FDCAN_ConfigTxDelayCompensation(FDCANx, fdcanInitStruct.DataTimeSeg1, fdcanInitStruct.DataTimeSeg1);
-  FDCAN_EnableTxDelayCompensation(FDCANx);
+  // FDCAN_ConfigTxDelayCompensation(FDCANx, fdcanInitStruct.DataTimeSeg1, fdcanInitStruct.DataTimeSeg1);
+  // FDCAN_EnableTxDelayCompensation(FDCANx);
 
   /* Configure Rx filter */
   sFilterConfig.IdType       = FDCAN_STANDARD_ID;
@@ -152,9 +154,9 @@ void OPENBL_FDCAN_Configuration(void)
            +-------------+
            |   FDCAN1    |
      +-----+-------------+
-     | TX  |     PB9     |
+     | TX  |    PB13     |
      +-----+-------------+
-     | RX  |     PB8     |
+     | RX  |    PB12     |
      +-----+-------------+ */
 
   GPIO_InitStructure.Pin            = FDCANx_TX_PIN;

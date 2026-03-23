@@ -84,7 +84,7 @@
 
 #ifndef SYSCLK_FREQ
 #if defined (N32H473) || defined (N32H474)
-#define SYSCLK_FREQ    200000000
+#define SYSCLK_FREQ    240000000
 #elif defined (N32H475) || defined (N32H482) || defined (N32H487)     
 #define SYSCLK_FREQ    240000000
 #else
@@ -95,7 +95,7 @@
 
 
 #ifndef SYSCLK_SRC
-#define SYSCLK_SRC   SYSCLK_USE_HSI_PLL
+#define SYSCLK_SRC   SYSCLK_USE_HSE_PLL
 #endif
 
 #if SYSCLK_SRC == SYSCLK_USE_HSI

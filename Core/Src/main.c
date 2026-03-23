@@ -21,6 +21,7 @@
 #include "app_openbootloader.h"
 #include "common_interface.h"
 #include "flash_interface.h"
+#include "interfaces_conf.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -31,6 +32,28 @@ uint32_t appAddr = 0x08018000;
 static void SystemClock_Config(void);
 extern uint32_t ticks;
 /* Private functions ---------------------------------------------------------*/
+
+void GPIO_Init(void)
+{
+  GPIO_InitType GPIO_InitStructure;
+
+  RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOB | RCC_AHB_PERIPHEN_GPIOC, ENABLE);
+  RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+
+  GPIO_InitStruct(&GPIO_InitStructure);
+
+  GPIO_InitStructure.Pin        = MUX1_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Mode  = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStructure.GPIO_Slew_Rate = GPIO_SLEW_RATE_SLOW;
+  GPIO_InitPeripheral(MUX1_GPIO_PORT, &GPIO_InitStructure);
+  GPIO_SetBits(MUX1_GPIO_PORT, MUX1_GPIO_PIN);
+
+  GPIO_InitStructure.Pin        = MUX2_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Mode  = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStructure.GPIO_Slew_Rate = GPIO_SLEW_RATE_SLOW;
+  GPIO_InitPeripheral(MUX2_GPIO_PORT, &GPIO_InitStructure);
+  GPIO_SetBits(MUX2_GPIO_PORT, MUX2_GPIO_PIN);
+}
 
 /**
   * @brief  Main program
@@ -43,6 +66,8 @@ int main(void)
 
   /* Configure the System clock */
   SystemClock_Config();
+
+  GPIO_Init();
 
   OpenBootloader_Init();
 	

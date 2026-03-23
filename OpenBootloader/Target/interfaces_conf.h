@@ -34,12 +34,18 @@
 /* ------------------------- Definitions for FDCAN -------------------------- */
 #define FDCANx                            FDCAN1
 
-#define FDCANx_TX_PIN                     GPIO_PIN_9
+#define FDCANx_TX_PIN                     GPIO_PIN_13
 #define FDCANx_TX_GPIO_PORT               GPIOB
-#define FDCANx_TX_AF                      GPIO_AF9
-#define FDCANx_RX_PIN                     GPIO_PIN_8
+#define FDCANx_TX_AF                      GPIO_AF25
+#define FDCANx_RX_PIN                     GPIO_PIN_12
 #define FDCANx_RX_GPIO_PORT               GPIOB
-#define FDCANx_RX_AF                      GPIO_AF9
+#define FDCANx_RX_AF                      GPIO_AF26
+
+/* ------------------------- Definitions for MUX ----------------------------- */
+#define MUX1_GPIO_PIN                     GPIO_PIN_15
+#define MUX1_GPIO_PORT                    GPIOB
+#define MUX2_GPIO_PIN                     GPIO_PIN_13
+#define MUX2_GPIO_PORT                    GPIOC
 
 #endif /* INTERFACES_CONF_H */
 
