@@ -32,7 +32,7 @@
                               | FLASH_FLAG_RTPKEYERR | FLASH_FLAG_ECC2ERR | FLASH_FLAG_DECCERR \
                               | FLASH_FLAG_RPADDERR)
 
-#define PAGE_ADDRESS(page) (FLASH_BASE+page*8*1024)
+#define PAGE_ADDRESS(page) (FLASH_BASE+page*FLASH_PAGE_SIZE)
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -45,7 +45,7 @@ OPENBL_MemoryTypeDef FLASH_Descriptor =
 {
   FLASH_START_ADDRESS,
   FLASH_END_ADDRESS,
-  (512U * 1024U),
+  FLASH_SIZE,
   FLASH_AREA,
   OPENBL_FLASH_Read,
   OPENBL_FLASH_Write,

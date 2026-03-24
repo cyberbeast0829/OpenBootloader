@@ -32,7 +32,10 @@
 
 /* -------------------------- Definitions for Memories ---------------------- */
 #define FLASH_START_ADDRESS               FLASH_BASE
-#define FLASH_END_ADDRESS                 (FLASH_BASE + (512 * 1024))
+#define FLASH_PAGE_SIZE                   0x2000U           /* 8 Kbytes */
+#define FLASH_PAGES_NUMBER                64
+#define FLASH_SIZE                        (FLASH_PAGE_SIZE * FLASH_PAGES_NUMBER)       /* 512 KB */
+#define FLASH_END_ADDRESS                 (FLASH_BASE + FLASH_SIZE)
 
 #define RAM_START_ADDRESS                 SRAM_BASE
 #define RAM_END_ADDRESS                   (SRAM_BASE + (96 * 1024))   /* Size of SRAM1 + SRAM2 (80 + 16) */
