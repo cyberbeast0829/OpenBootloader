@@ -27,7 +27,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-uint32_t appAddr = 0x08018000;
+uint32_t appAddr = 0x08008000;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 extern uint32_t ticks;
@@ -78,7 +78,7 @@ int main(void)
   while (1)
   {
     if (0 == OpenBootloader_ProtocolDetection()) {
-      if (ticks - last_ticks > 500) { // 如果没有任何接口被检测到，则跳转到APP
+      if (ticks - last_ticks > 200) { // 如果没有任何接口被检测到，则跳转到APP
         OPENBL_FLASH_JumpToAddress(appAddr);
       }
     }
