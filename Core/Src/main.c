@@ -25,6 +25,14 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define BOOTLOADER_MAGIC_VALUE  0xB00710ADU
+/*
+ * Direct pointer to the UNINIT RAM location shared with APP.
+ * Must match APP's _reboot_cookie address (RW_IRAM2 in scatter file = 0x20023FF0).
+ * Using volatile pointer avoids optimizer removing the read.
+ * The UNINIT scatter region ensures startup code never zeroes this address.
+ */
+#define BOOT_MAGIC_ADDR  ((volatile uint32_t *)0x20023FF0U)
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint32_t appAddr = 0x08008000;
@@ -63,14 +71,21 @@ void GPIO_Init(void)
 int main(void)
 {
   uint32_t last_ticks = 0;
+  uint8_t force_bootloader = 0;
 
   /* Configure the System clock */
   SystemClock_Config();
 
+  /* Check magic value: APP requested bootloader mode */
+  if (*BOOT_MAGIC_ADDR == BOOTLOADER_MAGIC_VALUE) {
+    force_bootloader = 1;
+  }
+  *BOOT_MAGIC_ADDR = 42;  /* Clear to avoid staying in bootloader on next reset */
+
   GPIO_Init();
 
   OpenBootloader_Init();
-	
+
 	Common_EnableIrq();
 
   /* Infinite loop */
@@ -78,7 +93,7 @@ int main(void)
   while (1)
   {
     if (0 == OpenBootloader_ProtocolDetection()) {
-      if (ticks - last_ticks > 200) { // 如果没有任何接口被检测到，则跳转到APP
+      if (!force_bootloader && (ticks - last_ticks > 200)) { // 如果没有任何接口被检测到，则跳转到APP
         OPENBL_FLASH_JumpToAddress(appAddr);
       }
     }
