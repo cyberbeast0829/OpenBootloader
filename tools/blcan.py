@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""PCAN USB OpenBootloader test tool (python-can).
+"""CAN USB OpenBootloader test tool (python-can).
 
 Features:
 - Basic CAN raw send/receive
 - Single OpenBootloader command tests
 - Full firmware upgrade flow
 - Detailed logs and clear error output for debugging
+
+Supported interfaces:
+- CANable (slcan, default, requires pyserial)
+- PCAN (pcan)
+- any other python-can backend via --interface / --channel
 """
 
 from __future__ import annotations
@@ -90,6 +95,43 @@ def chunked(data: bytes, size: int) -> Iterable[bytes]:
     for i in range(0, len(data), size):
         yield data[i : i + size]
 
+
+
+def guess_default_channel() -> str:
+    """Guess the CANable (slcan) serial port channel.
+
+    Tries to find a connected USB serial port that looks like a CANable
+    device; falls back to a platform-specific default otherwise.
+    """
+    try:
+        import serial.tools.list_ports as list_ports
+
+        ports = list(list_ports.comports())
+        if not ports:
+            raise OSError("no serial ports detected")
+        for p in ports:
+            desc = " ".join(filter(None, [p.description, p.product, p.manufacturer])).lower()
+            if "canable" in desc or "candlelight" in desc or ("can" in desc and "usb" in desc):
+                return p.device
+        for p in ports:
+            if p.device.lower().startswith(("com", "/dev/tty")):
+                return p.device
+    except Exception:
+        pass
+    if sys.platform.startswith("win"):
+        return "COM3"
+    if sys.platform.startswith("darwin"):
+        return "/dev/tty.usbmodem0000"
+    return "/dev/ttyACM0"
+
+
+def resolve_channel(interface: str, channel: Optional[str]) -> str:
+    """Resolve the CAN channel for the selected interface when not given."""
+    if channel:
+        return channel
+    if interface == "pcan":
+        return "PCAN_USBBUS1"
+    return guess_default_channel()
 
 def parse_int_list(text: str) -> List[int]:
     if not text.strip():
@@ -222,9 +264,10 @@ class BootloaderCanClient:
         self.close()
 
     def open(self) -> None:
-        self.log.info("Open CAN bus: interface=%s channel=%s bitrate=%d", self.interface, self.channel, self.bitrate)
-        self.bus = can.Bus(interface=self.interface, channel=self.channel, bitrate=self.bitrate)
-        # Some PCAN drivers may keep old frames in the RX queue across short reconnects.
+        channel = resolve_channel(self.interface, self.channel)
+        self.log.info("Open CAN bus: interface=%s channel=%s bitrate=%d", self.interface, channel, self.bitrate)
+        self.bus = can.Bus(interface=self.interface, channel=channel, bitrate=self.bitrate)
+        # Some drivers (e.g. PCAN) may keep old frames in the RX queue across short reconnects.
         self.flush_rx()
 
     def close(self) -> None:
@@ -592,15 +635,19 @@ def run_upgrade(client: BootloaderCanClient, args: argparse.Namespace, log: logg
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="PCAN USB OpenBootloader test tool")
+    parser = argparse.ArgumentParser(description="CAN OpenBootloader test tool (CANable/PCAN)")
     parser.add_argument(
         "--mcu",
         choices=sorted(MCU_PROFILES.keys()),
         default="n32h473",
         help="MCU profile used to fill default flash_base/page_size/sync_id",
     )
-    parser.add_argument("--interface", default="pcan", help="python-can interface (default: pcan)")
-    parser.add_argument("--channel", default="PCAN_USBBUS1", help="PCAN channel (default: PCAN_USBBUS1)")
+    parser.add_argument("--interface", default="slcan", help="python-can interface (default: slcan = CANable)")
+    parser.add_argument(
+        "--channel",
+        default=None,
+        help="CAN channel; default depends on --interface (CANable serial port e.g. COM3, or PCAN_USBBUS1)",
+    )
     parser.add_argument("--bitrate", type=int, default=500000, help="CAN bitrate, default 500000")
     parser.add_argument("--timeout", type=float, default=1.0, help="receive timeout in seconds")
     parser.add_argument("--sync-id", type=parse_int, default=None, help="SYNC frame ID, defaults to selected MCU profile")
