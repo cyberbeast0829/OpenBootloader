@@ -79,8 +79,13 @@ int main(void)
   /* Check magic value: APP requested bootloader mode */
   if (*BOOT_MAGIC_ADDR == BOOTLOADER_MAGIC_VALUE) {
     force_bootloader = 1;
+    *BOOT_MAGIC_ADDR = 42;  /* Clear only the bootloader request, so the
+                             * bootloader is not re-entered on the next reset. */
   }
-  *BOOT_MAGIC_ADDR = 42;  /* Clear to avoid staying in bootloader on next reset */
+  /* Do NOT clear the address otherwise: the APP may have written a different
+   * cookie (e.g. 0xDEADBEEF to enter the ROM DFU bootloader via
+   * ODrive::enter_dfu_mode()).  That cookie must survive until the APP's
+   * early_start_checks() reads it, otherwise the DFU request is lost. */
 
   GPIO_Init();
 
