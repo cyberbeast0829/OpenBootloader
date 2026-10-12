@@ -23,23 +23,23 @@
 #define MEMORIES_SUPPORTED                7U
 
 /* ------------------------- Definitions for USART -------------------------- */
-#define USARTx                            USART1
+#define USARTx                            USART4
 
-#define USARTx_TX_PIN                     GPIO_PIN_6
-#define USARTx_TX_GPIO_PORT               GPIOB
-#define USARTx_RX_PIN                     GPIO_PIN_7
-#define USARTx_RX_GPIO_PORT               GPIOB
-#define USARTx_ALTERNATE                  GPIO_AF1
+#define USARTx_TX_PIN                     GPIO_PIN_0
+#define USARTx_TX_GPIO_PORT               GPIOC
+#define USARTx_RX_PIN                     GPIO_PIN_1
+#define USARTx_RX_GPIO_PORT               GPIOC
+#define USARTx_ALTERNATE                  GPIO_AF10
 
 /* ------------------------- Definitions for FDCAN -------------------------- */
-#define FDCANx                            FDCAN1
+#define FDCANx                            FDCAN2
 
-#define FDCANx_TX_PIN                     GPIO_PIN_13
+#define FDCANx_TX_PIN                     GPIO_PIN_6
 #define FDCANx_TX_GPIO_PORT               GPIOB
-#define FDCANx_TX_AF                      GPIO_AF25
-#define FDCANx_RX_PIN                     GPIO_PIN_12
+#define FDCANx_TX_AF                      GPIO_AF27
+#define FDCANx_RX_PIN                     GPIO_PIN_7
 #define FDCANx_RX_GPIO_PORT               GPIOB
-#define FDCANx_RX_AF                      GPIO_AF26
+#define FDCANx_RX_AF                      GPIO_AF28
 
 /* ------------------------- Definitions for MUX ----------------------------- */
 #define MUX1_GPIO_PIN                     GPIO_PIN_15

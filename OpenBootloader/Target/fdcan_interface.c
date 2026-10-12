@@ -146,17 +146,17 @@ void OPENBL_FDCAN_Configuration(void)
   RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOB, ENABLE);
   RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 
-  /* Enable FDCAN1 clock */
-  RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_FDCAN1, ENABLE);
-  RCC_EnableAPB1PeriphReset(RCC_APB1_PERIPH_FDCAN1);
+  /* Enable FDCAN2 clock */
+  RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_FDCAN2, ENABLE);
+  RCC_EnableAPB1PeriphReset(RCC_APB1_PERIPH_FDCAN2);
 
-  /* FDCAN1 pins configuration
+  /* FDCAN2 pins configuration
            +-------------+
-           |   FDCAN1    |
+           |   FDCAN2    |
      +-----+-------------+
-     | TX  |    PB13     |
+     | TX  |    PB6      |
      +-----+-------------+
-     | RX  |    PB12     |
+     | RX  |    PB7      |
      +-----+-------------+ */
 
   GPIO_InitStructure.Pin            = FDCANx_TX_PIN;

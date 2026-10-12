@@ -77,20 +77,20 @@ void OPENBL_USART_Configuration(void)
 
   /* Enable all resources clocks --------------------------------------------*/
   /* Enable used GPIOx clocks */
-  RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOB, ENABLE);
+  RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOB | RCC_AHB_PERIPHEN_GPIOC, ENABLE);
   RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 
   /* Enable USART clock */
-  RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_USART1, ENABLE);
+  RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_USART4, ENABLE);
 
-  /* USART1 pins configuration -----------------------------------------------*/
+  /* USART4 pins configuration -----------------------------------------------*/
   /*
            +-------------+
-           |   USART1    |
+           |   USART4    |
      +-----+-------------+
-     | TX  |     PB6     |
+     | TX  |     PC0     |
      +-----+-------------+
-     | RX  |     PB7    |
+     | RX  |     PC1    |
      +-----+-------------+ */
 
   GPIO_InitStructure.Pin       = USARTx_TX_PIN;
@@ -122,7 +122,7 @@ uint8_t OPENBL_USART_ProtocolDetection(void)
     }
   }
 
-  /* Check if the USART1 is addressed */
+  /* Check if the USART4 is addressed */
   if (USART_GetFlagStatus(USARTx, USART_FLAG_RXDNE) == SET)
   {
     if (SYNC_BYTE == USART_ReceiveData(USARTx))

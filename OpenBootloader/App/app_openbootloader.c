@@ -86,10 +86,10 @@ extern OPENBL_MemoryTypeDef ICP2_Descriptor;
 void OpenBootloader_Init(void)
 {
   /* Register USART interfaces */
-  USART_Handle.p_Ops = &USART_Ops;
-  USART_Handle.p_Cmd = OPENBL_USART_GetCommandsList();
+  // USART_Handle.p_Ops = &USART_Ops;
+  // USART_Handle.p_Cmd = OPENBL_USART_GetCommandsList();
 
-  OPENBL_RegisterInterface(&USART_Handle);
+  // OPENBL_RegisterInterface(&USART_Handle);
 
   /* Register FDCAN interfaces */
   FDCAN_Handle.p_Ops = &FDCAN_Ops;
