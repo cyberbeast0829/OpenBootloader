@@ -40,10 +40,17 @@ void OPENBL_IWDG_Configuration(void)
   // IWDG_Enable();
 }
 
+/**
+  * @brief  Kick the independent watchdog if the application left it running.
+  *
+  * 本 bootloader 自己不开 IWDG（见上面的 OPENBL_IWDG_Configuration），但 App 一上电
+  * 就启用 IWDG（~4 s），而 IWDG 一旦启动只有上电复位才会停 —— App 用 magic value
+  * 软复位进 bootloader 后它仍在计数。不喂狗的话升级到一半就整机复位、magic 已被清掉，
+  * bootloader 200 ms 后跳回 App，OTA 永远做不完。
+  * IWDG 没启动时写 KR=0xAAAA 是无害的空操作。
+  */
 void OPENBL_IWDG_Refresh(void)
 {
-  /* Refresh IWDG: reload counter */
-  //IWDG_ReloadKey();
+  IWDG_ReloadKey();
 }
-
 

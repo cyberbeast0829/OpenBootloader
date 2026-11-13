@@ -392,7 +392,9 @@ class BootloaderCanClient:
         self.flush_rx()
         self.log.info("Send SYNC (0x7F) to ID 0x%03X", self.sync_id)
         self.send_frame(self.sync_id, bytes([SYNC]))
-        self.expect_ack(self.sync_id, "sync", allow_id0_fallback=False)
+        # 老版本 bootloader 的握手 ACK 发在 CAN ID 0x000（TxHeader.ID 未按 SYNC 帧更新），
+        # 新版本已改成回 0x128；这里允许 ID 0 兜底，两种固件都能握手。
+        self.expect_ack(self.sync_id, "sync", allow_id0_fallback=True)
 
     def cmd_simple(self, opcode: int, payload: bytes = b"", auto_sync: bool = True) -> None:
         if auto_sync:

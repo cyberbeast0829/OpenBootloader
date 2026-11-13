@@ -22,6 +22,7 @@
 #include "common_interface.h"
 #include "flash_interface.h"
 #include "interfaces_conf.h"
+#include "iwdg_interface.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -97,6 +98,9 @@ int main(void)
   last_ticks = ticks;
   while (1)
   {
+    /* APP 软复位进来时 IWDG 还在跑（它一上电就启用，只有上电复位才停），必须一直喂 */
+    OPENBL_IWDG_Refresh();
+
     if (0 == OpenBootloader_ProtocolDetection()) {
       if (!force_bootloader && (ticks - last_ticks > 200)) { // 如果没有任何接口被检测到，则跳转到APP
         OPENBL_FLASH_JumpToAddress(appAddr);

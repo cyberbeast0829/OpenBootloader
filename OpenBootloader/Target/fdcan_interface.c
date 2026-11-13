@@ -110,8 +110,8 @@ static void OPENBL_FDCAN_Init(void)
   sFilterConfig.FilterIndex  = 0;
   sFilterConfig.FilterType   = FDCAN_FILTER_RANGE;
   sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-  sFilterConfig.FilterID1    = 0x128;
-  sFilterConfig.FilterID2    = 0x128; // bootloader时ID默认为0x128
+  sFilterConfig.FilterID1    = SYNC_CAN_ID;
+  sFilterConfig.FilterID2    = SYNC_CAN_ID; // bootloader时ID默认为0x128
   FDCAN_ConfigFilter(FDCANx, &sFilterConfig);
 
   /* Prepare Tx Header */
@@ -188,6 +188,10 @@ uint8_t OPENBL_FDCAN_ProtocolDetection(void)
   {
     if (SYNC_BYTE == OPENBL_FDCAN_ReadByte()) {
       detected = 1;
+      /* 回 SYNC 帧自己的 CAN ID（0x128）。TxHeader.ID 在 Init 里是 0，只有
+       * GetCommandOpcode 才会按收到的命令更新，不在这里补一句握手 ACK 会发到
+       * ID 0，blcan.py 的 sync() 只等 0x128，于是握手永远超时。 */
+      TxHeader.ID = RxHeader.ID;
       OPENBL_FDCAN_SendByte(ACK_BYTE);
     }
   }
@@ -208,22 +212,38 @@ uint8_t OPENBL_FDCAN_GetCommandOpcode(void)
   uint8_t command_opc      = 0x0;
   ErrorStatus status       = SUCCESS;
 
-  /* check if FIFO 0 receive at least one message */
-  while (FDCAN_GetRxFifoFillLevel(FDCANx, FDCAN_RX_FIFO0) < 1)
-  {}
-
-  /* Retrieve Rx messages from RX FIFO0 */
-  status = FDCAN_GetRxMsg(FDCANx, FDCAN_RX_FIFO0, &RxHeader, RxData);
-
-  /* Check for errors */
-  if (status == ERROR)
+  for (;;)
   {
-    command_opc = ERROR_COMMAND;
-  }
-  else
-  {
-    command_opc  = RxHeader.ID;
-    TxHeader.ID  = RxHeader.ID;
+    /* check if FIFO 0 receive at least one message.  Kick the IWDG while waiting:
+     * the APP enables it and it survives the reset into the bootloader, so a host
+     * that pauses between commands must not let it expire. */
+    while (FDCAN_GetRxFifoFillLevel(FDCANx, FDCAN_RX_FIFO0) < 1)
+    {
+      OPENBL_IWDG_Refresh();
+    }
+
+    /* Retrieve Rx messages from RX FIFO0 */
+    status = FDCAN_GetRxMsg(FDCANx, FDCAN_RX_FIFO0, &RxHeader, RxData);
+
+    /* Check for errors */
+    if (status == ERROR)
+    {
+      command_opc = ERROR_COMMAND;
+      break;
+    }
+
+    command_opc = RxHeader.ID;
+    TxHeader.ID = RxHeader.ID;
+
+    /* SYNC 是握手而不是命令：已经进入命令模式的设备（检测已锁存）再收到 SYNC 时
+     * 回 ACK 并继续等真正的命令，而不是回 NACK。blcan.py 的 upgrade --sync 依赖
+     * 这一点：否则第二次握手会被当成未知命令。 */
+    if ((RxHeader.ID == SYNC_CAN_ID) && (RxData[0] == SYNC_BYTE))
+    {
+      OPENBL_FDCAN_SendByte(ACK_BYTE);
+      continue;
+    }
+    break;
   }
 
   return command_opc;
